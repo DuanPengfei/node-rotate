@@ -3,14 +3,13 @@
 const NodeRotate = require('../index');
 
 const _stdOut = new NodeRotate({
-    filename: './out.log'
+    filename: './out.log',
+    overwrite: [ 'stdout' ]
 });
 const _stdErr = new NodeRotate({
-    filename: './err.log'
+    filename: './err.log',
+    overwrite: [ 'stderr' ]
 });
-
-process.stdout.write = _stdOut.write.bind(_stdOut);
-process.stderr.write = _stdErr.write.bind(_stdErr);
 
 console.log('out 1');
 console.error('err 1');

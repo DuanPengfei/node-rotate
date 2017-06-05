@@ -13,16 +13,28 @@ class NodeRotate extends Writable {
         const selfOptions = {
             filename: options.filename,
             retryCount: options.retryCount || 3,
-            reconnectCount: options.reconnectCount || 3
+            reconnectCount: options.reconnectCount || 3,
+            overwrite: options.overwrite || []
         };
 
         super(superOptions);
 
         this.filename = selfOptions.filename;
-        this.writer = this._open();
         this.retryCount = selfOptions.retryCount;
         this.reconnectCount = selfOptions.reconnectCount;
+        this.overwrite = selfOptions.overwrite;
         this.errCount = 0;
+        this.writer = this._open();
+
+        if (this.overwrite instanceof Array && this.overwrite.length > 0) {
+            for (const item of this.overwrite) {
+                if (item === 'stdout') {
+                    process.stdout.write = this.write.bind(this);
+                } else if (item === 'stderr') {
+                    process.stderr.write = this.write.bind(this);
+                }
+            }
+        }
     }
 
     _write(chunk, encoding, callback) {
